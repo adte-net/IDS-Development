@@ -1,0 +1,5 @@
+Setup local git and github connection to jupyterlab
+Prompt github to extend the notebook to include maps, etc
+Simulate web01 nftables rules
+Simulate traffic
+Deploy and test in production
