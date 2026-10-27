@@ -3,3 +3,9 @@ Prompt github to extend the notebook to include maps, etc
 Simulate web01 nftables rules
 Simulate traffic
 Deploy and test in production
+Configure Trap, Block and Report
+
+Create a workflow for saving a jupyter notebook as an html page, pushing to the docs directory and retrieving the url for the page.
+
+Are you able to read this page?
+https://adte-net.github.io/IDS-Development/02b_zone_policy_explorer.html
