@@ -1,0 +1,71 @@
+I've setup of the following in an nspawn container to simulate a nftables firewall:
+<mxGraphModel dx="1659" dy="875" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+  <root>
+    <mxCell id="0" />
+    <mxCell id="1" parent="0" />
+    <mxCell id="container" parent="1" style="swimlane;html=1;startSize=40;rounded=1;whiteSpace=wrap;fillColor=light-dark(#D4E1F5,#121212);strokeColor=#666666;fontStyle=1;" value="nft01 — Debian systemd-nspawn container&#xa;Lab host: all simulated namespaces run inside here" vertex="1">
+      <mxGeometry height="840" width="1160" x="20" y="20" as="geometry" />
+    </mxCell>
+    <mxCell id="web01" parent="container" style="swimlane;html=1;startSize=35;rounded=1;whiteSpace=wrap;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;" value="Network namespace: web01&#xa;Simulated production VPS / firewall under test" vertex="1">
+      <mxGeometry height="380" width="440" x="370" y="100" as="geometry" />
+    </mxCell>
+    <mxCell id="eth0" parent="web01" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" value="eth0&#xa;163.213.153.201/24&#xa;2606:9006:0:35::2f2:f43d/64&#xa;Public-facing interface" vertex="1">
+      <mxGeometry height="105" width="175" x="25" y="65" as="geometry" />
+    </mxCell>
+    <mxCell id="wg0" parent="web01" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;" value="wg0&#xa;10.221.233.2/32&#xa;No active VPN tunnel" vertex="1">
+      <mxGeometry height="105" width="165" x="240" y="65" as="geometry" />
+    </mxCell>
+    <mxCell id="nftables" parent="web01" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" value="nftables ruleset&#xa;INPUT / OUTPUT / FORWARD&#xa;IPv4 + IPv6&#xa;NAT / conntrack / counters" vertex="1">
+      <mxGeometry height="105" width="280" x="80" y="215" as="geometry" />
+    </mxCell>
+    <mxCell id="wan" parent="container" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;" value="Network namespace: wan&#xa;Simulated upstream gateway&#xa;192.0.2.1/24&#xa;2001:db8:100::1/64" vertex="1">
+      <mxGeometry height="130" width="250" x="50" y="160" as="geometry" />
+    </mxCell>
+    <mxCell id="client1" parent="container" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" value="Network namespace: client1&#xa;External traffic generator&#xa;Example: 198.51.100.20&#xa;Can run ping, curl, nc, nmap" vertex="1">
+      <mxGeometry height="145" width="250" x="50" y="380" as="geometry" />
+    </mxCell>
+    <mxCell id="server1" parent="container" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" value="Network namespace: server1&#xa;Simulated external service&#xa;HTTP / SSH / UDP test services&#xa;For outbound and NAT tests" vertex="1">
+      <mxGeometry height="130" width="260" x="850" y="160" as="geometry" />
+    </mxCell>
+    <mxCell id="traffic" parent="container" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="Test traffic&#xa;TCP / UDP / ICMP&#xa;IPv4 + IPv6" vertex="1">
+      <mxGeometry height="95" width="260" x="850" y="380" as="geometry" />
+    </mxCell>
+    <mxCell id="wanlink" edge="1" parent="container" source="wan" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#6c8ebf;endArrow=none;startArrow=none;" target="eth0" value="veth pair&#xa;WAN-side link">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="clientlink" edge="1" parent="container" source="client1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#82b366;endArrow=none;startArrow=none;" target="wan" value="veth / simulated WAN segment&#xa;Route client traffic toward web01">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="serverlink" edge="1" parent="container" source="wan" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;dashed=1;strokeColor=#9673a6;endArrow=none;startArrow=none;" target="server1" value="Simulated upstream network&#xa;Routing configured as required">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="testlink" edge="1" parent="container" source="client1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;dashed=1;strokeColor=#d6b656;endArrow=block;startArrow=none;" target="traffic" value="Generate packets and inspect results">
+      <mxGeometry relative="1" as="geometry" />
+    </mxCell>
+    <mxCell id="note" parent="container" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;size=18;fillColor=#f5f5f5;strokeColor=#666666;" value="Important: nft01 is the container, not the firewall namespace.&#xa;web01 owns eth0, wg0, routes, and the nftables ruleset.&#xa;Use client1 or server1 to generate traffic across virtual links.&#xa;No physical NIC or real VPN connection is required." vertex="1">
+      <mxGeometry height="115" width="560" x="370" y="560" as="geometry" />
+    </mxCell>
+  </root>
+</mxGraphModel>
+
+I've deployed jupyter lab so that I can use it to interact with the firewall..create views of the rules, maps, chains, etc.
+
+Here is what I installed for this project:
+
+python -m pip install \
+    jupyterlab \
+    ipykernel \
+    ipywidgets \
+    pydantic \
+    rich \
+    pandas \
+    networkx \
+    matplotlib \
+    plotly \
+    scapy
+
+python -m pip install ipycytoscape
+
+The nftables firewall is loaded in the web01 namespace.
+This firewall relies heavily on maps and that is the current focus. We begun this process by way of creating the Zone Policy Explorer notebook. Here is what we have so far:
+
