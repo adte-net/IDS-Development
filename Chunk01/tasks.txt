@@ -1,4 +1,4 @@
-Setup local git and github connection to jupyterlab
+Setup local git and github connection to jupyterlab (git rm -r --cached */.ipynb_checkpoints)
 Prompt github to extend the notebook to include maps, etc
 Simulate web01 nftables rules
 Simulate traffic
@@ -9,3 +9,56 @@ Create a workflow for saving a jupyter notebook as an html page, pushing to the 
 
 Are you able to read this page?
 https://adte-net.github.io/IDS-Development/02b_zone_policy_explorer.html
+
+Can you read this jupyter notebook?
+https://github.com/adte-net/IDS-Development/blob/main/Chunk01/%2002b_zone_policy_explorer.ipynb
+
+--
+The nftables firewall is loaded in the web01 namespace.
+This firewall relies heavily on maps and that is the current focus. 
+Extend the following notebook to explore the maps:
+https://adte-net.github.io/IDS-Development/02c_zone_policy_explorer.html
+
+I need the maps divided by protocol (tcp, udp, ping) then by zone collectively with all of its tables and then by zone and by table individually.
+Zones are composed of a collection of tables.
+
+Here is what I installed for this project:
+
+python -m pip install \
+    jupyterlab \
+    ipykernel \
+    ipywidgets \
+    pydantic \
+    rich \
+    pandas \
+    networkx \
+    matplotlib \
+    plotly \
+    scapy
+
+python -m pip install ipycytoscape
+
+--
+The nftables firewall is loaded in the web01 namespace.
+This firewall relies heavily on maps and that is the current focus. 
+Extend the following notebook to explore the maps:
+https://adte-net.github.io/IDS-Development/02c_zone_policy_explorer.html
+
+I need the maps divided by protocol (tcp, udp, ping) then by zone collectively with all of its tables and then by zone and by table individually.
+Zones are composed of a collection of tables.
+
+Here is what I installed for this project:
+
+python -m pip install \
+    jupyterlab \
+    ipykernel \
+    ipywidgets \
+    pydantic \
+    rich \
+    pandas \
+    networkx \
+    matplotlib \
+    plotly \
+    scapy
+
+python -m pip install ipycytoscape
