@@ -7804,7 +7804,7 @@ a.anchor-link {
 
     <div style="background-color: #f6f8fa; border-bottom: 1px solid #d1d5db; padding: 12px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; color: #24292e; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px;">
         <div><strong>Notebook:</strong> 04_tcp_zone01_editor.ipynb</div>
-        <div><strong>Last Generated:</strong> 2026-10-28 12:02:47</div>
+        <div><strong>Last Generated:</strong> 2026-10-28 13:08:44</div>
     </div>
     
 <main><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=aa049aba-331d-4ce6-a8c2-fcb02d7a351a">
@@ -7964,7 +7964,7 @@ a.anchor-link {
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>Source: /etc/nft/web01/rules/10-tcp-networks.nft
 Staging destination: /tmp/10-tcp-networks.zone01.staged.nft
-Zone 01 TCP rules loaded: 11
+Zone 01 TCP rules loaded: 10
 </pre>
 </div>
 </div>
@@ -8295,208 +8295,45 @@ Zone 01 TCP rules loaded: 11
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=ba5585f5-267c-4861-b4fa-c77b4d9f3408">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e4e201cc-de7d-44c5-9b04-35411980c2fb">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [3]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># ============================================================</span>
-<span class="c1"># Pre-save validation for TCP Zone 01</span>
-<span class="c1"># ============================================================</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">validate_rules</span><span class="p">():</span>
-    <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">warnings</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">rules</span><span class="p">:</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Both definitions will be empty."</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">rule</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rules</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Rule </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">"</span>
-
-        <span class="c1"># Required fields</span>
-        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="p">(</span>
-            <span class="s2">"interface"</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">,</span> <span class="s2">"destination"</span><span class="p">,</span> <span class="s2">"port"</span><span class="p">,</span> <span class="s2">"verdict"</span>
-        <span class="p">):</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
-                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2"> is empty."</span><span class="p">)</span>
-
-        <span class="c1"># Port must be a numeric port or a symbolic variable.</span>
-        <span class="n">port</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"port"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="n">port</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">port</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">port</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">65535</span><span class="p">:</span>
-                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: port </span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2"> is outside 1–65535."</span>
-                    <span class="p">)</span>
-            <span class="k">elif</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\$[A-Za-z_][A-Za-z0-9_]*"</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
-                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: port must be numeric or a variable "</span>
-                    <span class="s2">"such as $https."</span>
-                <span class="p">)</span>
-
-        <span class="c1"># Check for duplicates across the complete logical rule.</span>
-        <span class="n">signature</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
-            <span class="n">rule</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="p">(</span>
-                <span class="s2">"interface"</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">,</span> <span class="s2">"destination"</span><span class="p">,</span> <span class="s2">"port"</span><span class="p">,</span> <span class="s2">"verdict"</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">signature</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
-            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: duplicate logical rule."</span><span class="p">)</span>
-        <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">signature</span><span class="p">)</span>
-
-        <span class="c1"># These fields are expressions in nftables, so flag obvious</span>
-        <span class="c1"># accidental line breaks or rule delimiters.</span>
-        <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="p">(</span>
-            <span class="s2">"interface"</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">,</span> <span class="s2">"destination"</span><span class="p">,</span> <span class="s2">"port"</span><span class="p">,</span> <span class="s2">"verdict"</span>
-        <span class="p">):</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">ch</span> <span class="ow">in</span> <span class="n">value</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\r</span><span class="s2">"</span><span class="p">,</span> <span class="s2">";"</span><span class="p">,</span> <span class="s2">"{"</span><span class="p">,</span> <span class="s2">"}"</span><span class="p">)):</span>
-                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: invalid delimiter in </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">."</span>
-                <span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">rule</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"verdict"</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"accept"</span><span class="p">,</span> <span class="s2">"drop"</span><span class="p">,</span> <span class="s2">"reject"</span><span class="p">}:</span>
-            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: unsupported verdict "</span>
-                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">rule</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'verdict'</span><span class="p">)</span><span class="si">!r}</span><span class="s2">."</span>
-            <span class="p">)</span>
-
-    <span class="c1"># Verify that the generator produces corresponding R01/R02 keys.</span>
-    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">rule</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rules</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">fields01</span> <span class="o">=</span> <span class="n">key_r01</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">" . "</span><span class="p">)</span>
-        <span class="n">fields02</span> <span class="o">=</span> <span class="n">key_r02</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">" . "</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">fields01</span> <span class="o">!=</span> <span class="p">[</span><span class="s2">"$Z01"</span><span class="p">]</span> <span class="o">+</span> <span class="n">fields02</span><span class="p">:</span>
-            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"Rule </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">: R01 and R02 keys do not correspond."</span>
-            <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">errors</span><span class="p">,</span> <span class="n">warnings</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">display_validation</span><span class="p">():</span>
-    <span class="n">errors</span><span class="p">,</span> <span class="n">warnings</span> <span class="o">=</span> <span class="n">validate_rules</span><span class="p">()</span>
-
-    <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s2">"## Validation report"</span><span class="p">))</span>
-
-    <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
-        <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span>
-            <span class="s2">"&lt;h4 style='color:#b91c1c'&gt;Validation failed&lt;/h4&gt;"</span>
-        <span class="p">))</span>
-        <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">"ERROR:"</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span>
-            <span class="s2">"&lt;h4 style='color:#166534'&gt;Logical validation passed&lt;/h4&gt;"</span>
-        <span class="p">))</span>
-
-    <span class="k">for</span> <span class="n">warning</span> <span class="ow">in</span> <span class="n">warnings</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"WARNING:"</span><span class="p">,</span> <span class="n">warning</span><span class="p">)</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Logical rules: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rules</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Generated R01 entries: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rules</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Generated R02 entries: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rules</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="ow">not</span> <span class="n">errors</span>
-
-
-<span class="n">display_validation</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<h2 id="Validation-report">Validation report<a class="anchor-link" href="#Validation-report">¶</a></h2>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output" data-mime-type="text/html" tabindex="0">
-<h4 style="color:#166534">Logical validation passed</h4>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>
-Logical rules: 10
-Generated R01 entries: 10
-Generated R02 entries: 10
-</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
-<div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain" tabindex="0">
-<pre>True</pre>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=5430940c-0852-400a-aa48-081ee3e766f8">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [4]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Cell 3 — Validate, stage, review, and check TCP Zone 01 rules</span>
-<span class="c1">#</span>
-<span class="c1"># Requires the existing Cell 1 and Cell 2 variables/functions:</span>
-<span class="c1"># SOURCE_FILE, STAGING_FILE, R01, R02, rules, source_original,</span>
-<span class="c1"># key_r01(), key_r02(), nft_entry(), read_source(), set_status().</span>
-<span class="c1">#</span>
-<span class="c1"># This cell never applies changes to the live firewall.</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># TCP Zone 01 — Validate, stage, test, deploy, and reload</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">difflib</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Markdown</span><span class="p">,</span> <span class="n">HTML</span><span class="p">,</span> <span class="n">clear_output</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">widgets</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Markdown</span><span class="p">,</span> <span class="n">HTML</span><span class="p">,</span> <span class="n">clear_output</span>
 
 
 <span class="c1"># ------------------------------------------------------------</span>
 <span class="c1"># Configuration</span>
 <span class="c1"># ------------------------------------------------------------</span>
 
-<span class="c1"># Set this to the real top-level ruleset file used by your firewall</span>
-<span class="c1"># loader if you want to run a syntax check against the full ruleset.</span>
-<span class="c1">#</span>
-<span class="c1"># Leave as None until you have confirmed the correct loader entry point.</span>
-<span class="n">RULESET_ENTRYPOINT</span> <span class="o">=</span> <span class="kc">None</span>
-
-<span class="c1"># Namespace containing the target firewall.</span>
+<span class="n">SOURCE_FILE</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"/etc/nft/web01/rules/10-tcp-networks.nft"</span><span class="p">)</span>
+<span class="n">STAGING_FILE</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"/tmp/10-tcp-network.nft"</span><span class="p">)</span>
+<span class="n">RULESET_ENTRYPOINT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"/tmp/nftables-zone01-test.conf"</span><span class="p">)</span>
+<span class="n">PRODUCTION_ENTRYPOINT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"/etc/nftables.conf"</span><span class="p">)</span>
 <span class="n">VALIDATION_NAMESPACE</span> <span class="o">=</span> <span class="s2">"web01"</span>
 
-<span class="c1"># nft -c checks syntax without applying the ruleset.</span>
-<span class="c1"># The check is performed only when a validated entry point is configured.</span>
-<span class="n">RUN_NFT_CHECK</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">VARIABLES_INCLUDE</span> <span class="o">=</span> <span class="s2">"/etc/nft/web01/variables/*.nft"</span>
+<span class="n">CONSTANTS_INCLUDE</span> <span class="o">=</span> <span class="s2">"/etc/nft/web01/constants/*.nft"</span>
+<span class="n">ICMP_INCLUDE</span> <span class="o">=</span> <span class="s2">"/etc/nft/web01/rules/06-icmp-networks.nft"</span>
+<span class="n">UDP_INCLUDE</span> <span class="o">=</span> <span class="s2">"/etc/nft/web01/rules/08-udp-networks.nft"</span>
+<span class="n">ZONES_INCLUDE</span> <span class="o">=</span> <span class="s2">"/etc/nft/web01/zones/*.nft"</span>
 
 
 <span class="c1"># ------------------------------------------------------------</span>
-<span class="c1"># Logical rule validation</span>
+<span class="c1"># Logical validation</span>
 <span class="c1"># ------------------------------------------------------------</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_zone01_rules</span><span class="p">():</span>
@@ -8504,75 +8341,59 @@ Generated R02 entries: 10
     <span class="n">warnings</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
+    <span class="n">required</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"interface"</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">,</span> <span class="s2">"destination"</span><span class="p">,</span> <span class="s2">"port"</span><span class="p">,</span> <span class="s2">"verdict"</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="ow">not</span> <span class="n">rules</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Both Zone 01 TCP definitions will be empty."</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">rule</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rules</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="n">label</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Rule </span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">"</span>
 
-        <span class="n">required</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">"interface"</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">,</span> <span class="s2">"destination"</span><span class="p">,</span> <span class="s2">"port"</span><span class="p">,</span> <span class="s2">"verdict"</span>
-        <span class="p">)</span>
-
         <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">required</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
                 <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2"> is empty."</span><span class="p">)</span>
 
-        <span class="c1"># Only accept a decimal port or an nftables variable reference.</span>
         <span class="n">port</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"port"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-
         <span class="k">if</span> <span class="n">port</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">port</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="nb">int</span><span class="p">(</span><span class="n">port</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">65535</span><span class="p">:</span>
                     <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: numeric port must be between 1 and 65535."</span>
+                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: port must be between 1 and 65535."</span>
                     <span class="p">)</span>
-            <span class="k">elif</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span>
-                <span class="sa">r</span><span class="s2">"\$[A-Za-z_][A-Za-z0-9_]*"</span><span class="p">,</span> <span class="n">port</span>
-            <span class="p">):</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\$[A-Za-z_][A-Za-z0-9_]*"</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
                 <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: destination port must be numeric "</span>
-                    <span class="s2">"or a variable such as $https."</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: port must be numeric or a variable "</span>
+                    <span class="s2">"such as $https."</span>
                 <span class="p">)</span>
 
-        <span class="c1"># Fields are nftables expressions. Reject obvious delimiters</span>
-        <span class="c1"># that could escape the intended one-line rule representation.</span>
         <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">required</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span>
             <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">ch</span> <span class="ow">in</span> <span class="n">value</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\r</span><span class="s2">"</span><span class="p">,</span> <span class="s2">";"</span><span class="p">,</span> <span class="s2">"{"</span><span class="p">,</span> <span class="s2">"}"</span><span class="p">)):</span>
-                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: invalid delimiter in </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">."</span>
-                <span class="p">)</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: invalid delimiter in </span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
 
         <span class="n">verdict</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"verdict"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">verdict</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"accept"</span><span class="p">,</span> <span class="s2">"drop"</span><span class="p">,</span> <span class="s2">"reject"</span><span class="p">}:</span>
-            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: unsupported verdict </span><span class="si">{</span><span class="n">verdict</span><span class="si">!r}</span><span class="s2">."</span>
-            <span class="p">)</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: unsupported verdict </span><span class="si">{</span><span class="n">verdict</span><span class="si">!r}</span><span class="s2">."</span><span class="p">)</span>
 
         <span class="n">signature</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
-            <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">required</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">rule</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">required</span>
         <span class="p">)</span>
-
         <span class="k">if</span> <span class="n">signature</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
             <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: duplicate logical rule."</span><span class="p">)</span>
         <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">signature</span><span class="p">)</span>
 
-        <span class="c1"># Ensure the R01 key is precisely the R02 key with $Z01 added.</span>
-        <span class="k">if</span> <span class="n">key_r01</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">" . "</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span>
-            <span class="p">[</span><span class="s2">"$Z01"</span><span class="p">]</span> <span class="o">+</span> <span class="n">key_r02</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">" . "</span><span class="p">)</span>
-        <span class="p">):</span>
-            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: R01 and R02 keys do not correspond."</span>
-            <span class="p">)</span>
+        <span class="n">expected_r01</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"$Z01"</span><span class="p">]</span> <span class="o">+</span> <span class="n">key_r02</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">" . "</span><span class="p">)</span>
+        <span class="n">actual_r01</span> <span class="o">=</span> <span class="n">key_r01</span><span class="p">(</span><span class="n">rule</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">" . "</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">actual_r01</span> <span class="o">!=</span> <span class="n">expected_r01</span><span class="p">:</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: R01/R02 keys do not correspond."</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">errors</span><span class="p">,</span> <span class="n">warnings</span>
 
 
 <span class="c1"># ------------------------------------------------------------</span>
-<span class="c1"># Source verification and staged configuration generation</span>
+<span class="c1"># Generate both map definitions in the staged TCP file</span>
 <span class="c1"># ------------------------------------------------------------</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">render_zone01_definition</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">entries</span><span class="p">):</span>
@@ -8590,26 +8411,27 @@ Generated R02 entries: 10
 <span class="k">def</span><span class="w"> </span><span class="nf">build_zone01_staged_source</span><span class="p">():</span>
     <span class="n">current_source</span> <span class="o">=</span> <span class="n">read_source</span><span class="p">()</span>
 
-    <span class="c1"># Protect against silently overwriting edits made outside the notebook.</span>
     <span class="k">if</span> <span class="n">current_source</span> <span class="o">!=</span> <span class="n">source_original</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-            <span class="s2">"The source file changed after the notebook loaded it. "</span>
-            <span class="s2">"Reload the source and reconcile external changes before saving."</span>
+            <span class="s2">"Production source changed since it was loaded. "</span>
+            <span class="s2">"Reload and reconcile changes before proceeding."</span>
         <span class="p">)</span>
 
-    <span class="n">r01_entries</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="p">{</span><span class="s2">"key"</span><span class="p">:</span> <span class="n">key_r01</span><span class="p">(</span><span class="n">rule</span><span class="p">),</span> <span class="s2">"verdict"</span><span class="p">:</span> <span class="n">rule</span><span class="p">[</span><span class="s2">"verdict"</span><span class="p">]}</span>
-        <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">rules</span>
-    <span class="p">]</span>
-
-    <span class="n">r02_entries</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="p">{</span><span class="s2">"key"</span><span class="p">:</span> <span class="n">key_r02</span><span class="p">(</span><span class="n">rule</span><span class="p">),</span> <span class="s2">"verdict"</span><span class="p">:</span> <span class="n">rule</span><span class="p">[</span><span class="s2">"verdict"</span><span class="p">]}</span>
-        <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">rules</span>
-    <span class="p">]</span>
-
     <span class="n">replacements</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">R01</span><span class="p">:</span> <span class="n">render_zone01_definition</span><span class="p">(</span><span class="n">R01</span><span class="p">,</span> <span class="n">r01_entries</span><span class="p">),</span>
-        <span class="n">R02</span><span class="p">:</span> <span class="n">render_zone01_definition</span><span class="p">(</span><span class="n">R02</span><span class="p">,</span> <span class="n">r02_entries</span><span class="p">),</span>
+        <span class="n">R01</span><span class="p">:</span> <span class="n">render_zone01_definition</span><span class="p">(</span>
+            <span class="n">R01</span><span class="p">,</span>
+            <span class="p">[</span>
+                <span class="p">{</span><span class="s2">"key"</span><span class="p">:</span> <span class="n">key_r01</span><span class="p">(</span><span class="n">rule</span><span class="p">),</span> <span class="s2">"verdict"</span><span class="p">:</span> <span class="n">rule</span><span class="p">[</span><span class="s2">"verdict"</span><span class="p">]}</span>
+                <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">rules</span>
+            <span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">R02</span><span class="p">:</span> <span class="n">render_zone01_definition</span><span class="p">(</span>
+            <span class="n">R02</span><span class="p">,</span>
+            <span class="p">[</span>
+                <span class="p">{</span><span class="s2">"key"</span><span class="p">:</span> <span class="n">key_r02</span><span class="p">(</span><span class="n">rule</span><span class="p">),</span> <span class="s2">"verdict"</span><span class="p">:</span> <span class="n">rule</span><span class="p">[</span><span class="s2">"verdict"</span><span class="p">]}</span>
+                <span class="k">for</span> <span class="n">rule</span> <span class="ow">in</span> <span class="n">rules</span>
+            <span class="p">],</span>
+        <span class="p">),</span>
     <span class="p">}</span>
 
     <span class="n">staged</span> <span class="o">=</span> <span class="n">current_source</span>
@@ -8630,258 +8452,36 @@ Generated R02 entries: 10
 
         <span class="k">if</span> <span class="n">count</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"Expected exactly one definition for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">; "</span>
-                <span class="sa">f</span><span class="s2">"found </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">."</span>
+                <span class="sa">f</span><span class="s2">"Expected exactly one definition for </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">; found </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">."</span>
             <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">staged</span>
 
 
 <span class="c1"># ------------------------------------------------------------</span>
-<span class="c1"># Optional nftables syntax check</span>
-<span class="c1"># ------------------------------------------------------------</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">check_staged_configuration</span><span class="p">(</span><span class="n">staged_text</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""</span>
-<span class="sd">    Syntax-check a complete ruleset entry point with nft -c.</span>
-
-<span class="sd">    The staged source file is not itself loaded into the live firewall.</span>
-<span class="sd">    A full entry point must include the definitions and other files</span>
-<span class="sd">    required by the real configuration.</span>
-<span class="sd">    """</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">RUN_NFT_CHECK</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">"status"</span><span class="p">:</span> <span class="s2">"skipped"</span><span class="p">,</span>
-            <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"nftables syntax check disabled."</span><span class="p">,</span>
-        <span class="p">}</span>
-
-    <span class="k">if</span> <span class="n">RULESET_ENTRYPOINT</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">"status"</span><span class="p">:</span> <span class="s2">"skipped"</span><span class="p">,</span>
-            <span class="s2">"message"</span><span class="p">:</span> <span class="p">(</span>
-                <span class="s2">"No RULESET_ENTRYPOINT configured. Set it to the "</span>
-                <span class="s2">"actual top-level file used by the firewall loader "</span>
-                <span class="s2">"before relying on nftables syntax validation."</span>
-            <span class="p">),</span>
-        <span class="p">}</span>
-
-    <span class="n">entrypoint</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">RULESET_ENTRYPOINT</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">entrypoint</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span>
-            <span class="s2">"message"</span><span class="p">:</span> <span class="sa">f</span><span class="s2">"Ruleset entry point does not exist: </span><span class="si">{</span><span class="n">entrypoint</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
-        <span class="p">}</span>
-
-    <span class="c1"># This cell deliberately does not substitute the staged definition</span>
-    <span class="c1"># into the live entry point or apply it. A real integration test</span>
-    <span class="c1"># should use an isolated test namespace and a complete staged tree.</span>
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">"status"</span><span class="p">:</span> <span class="s2">"not_run"</span><span class="p">,</span>
-        <span class="s2">"message"</span><span class="p">:</span> <span class="p">(</span>
-            <span class="s2">"Full ruleset validation requires an isolated staged "</span>
-            <span class="s2">"configuration tree. The configured entry point has not "</span>
-            <span class="s2">"been modified or executed."</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
-
-
-<span class="c1"># ------------------------------------------------------------</span>
-<span class="c1"># Complete Save action</span>
-<span class="c1"># ------------------------------------------------------------</span>
-
-<span class="n">save_button</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">"Validate and save staging file"</span><span class="p">,</span>
-    <span class="n">icon</span><span class="o">=</span><span class="s2">"save"</span><span class="p">,</span>
-    <span class="n">button_style</span><span class="o">=</span><span class="s2">"info"</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">validation_output</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
-<span class="n">diff_output</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">save_zone01_staging</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
-    <span class="k">with</span> <span class="n">validation_output</span><span class="p">:</span>
-        <span class="n">clear_output</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="n">errors</span><span class="p">,</span> <span class="n">warnings</span> <span class="o">=</span> <span class="n">validate_zone01_rules</span><span class="p">()</span>
-
-        <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s2">"## Validation report"</span><span class="p">))</span>
-
-        <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
-            <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span>
-                <span class="s2">"&lt;h4 style='color:#b91c1c'&gt;Validation failed&lt;/h4&gt;"</span>
-            <span class="p">))</span>
-            <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">"ERROR:"</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
-
-            <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Staging file was not written."</span><span class="p">)</span>
-            <span class="n">set_status</span><span class="p">(</span><span class="s2">"Validation failed; staging was not saved."</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="k">return</span>
-
-        <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span>
-            <span class="s2">"&lt;h4 style='color:#166534'&gt;Logical validation passed&lt;/h4&gt;"</span>
-        <span class="p">))</span>
-
-        <span class="k">for</span> <span class="n">warning</span> <span class="ow">in</span> <span class="n">warnings</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">"WARNING:"</span><span class="p">,</span> <span class="n">warning</span><span class="p">)</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">staged_text</span> <span class="o">=</span> <span class="n">build_zone01_staged_source</span><span class="p">()</span>
-
-            <span class="c1"># Write only to the staging destination.</span>
-            <span class="n">STAGING_FILE</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">STAGING_FILE</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">staged_text</span><span class="p">)</span>
-
-            <span class="n">check</span> <span class="o">=</span> <span class="n">check_staged_configuration</span><span class="p">(</span><span class="n">staged_text</span><span class="p">)</span>
-
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Rules: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rules</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"R01 entries: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rules</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"R02 entries: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rules</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Staging file: </span><span class="si">{</span><span class="n">STAGING_FILE</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"nftables check status: </span><span class="si">{</span><span class="n">check</span><span class="p">[</span><span class="s1">'status'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">check</span><span class="p">[</span><span class="s2">"message"</span><span class="p">])</span>
-
-            <span class="k">with</span> <span class="n">diff_output</span><span class="p">:</span>
-                <span class="n">clear_output</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-                <span class="n">diff</span> <span class="o">=</span> <span class="n">difflib</span><span class="o">.</span><span class="n">unified_diff</span><span class="p">(</span>
-                    <span class="n">source_original</span><span class="o">.</span><span class="n">splitlines</span><span class="p">(),</span>
-                    <span class="n">staged_text</span><span class="o">.</span><span class="n">splitlines</span><span class="p">(),</span>
-                    <span class="n">fromfile</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">SOURCE_FILE</span><span class="p">),</span>
-                    <span class="n">tofile</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">STAGING_FILE</span><span class="p">),</span>
-                    <span class="n">lineterm</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
-                <span class="p">)</span>
-
-                <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s2">"## Proposed diff"</span><span class="p">))</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"No changes detected."</span><span class="p">)</span>
-
-            <span class="n">set_status</span><span class="p">(</span>
-                <span class="s2">"Staging file saved. The live firewall was not changed."</span>
-            <span class="p">)</span>
-
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ERROR: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="n">set_status</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"Could not generate staging configuration: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
-                <span class="n">error</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">)</span>
-
-
-<span class="n">save_button</span><span class="o">.</span><span class="n">on_click</span><span class="p">(</span><span class="n">save_zone01_staging</span><span class="p">)</span>
-
-<span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s2">"## Validate and stage"</span><span class="p">))</span>
-<span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span>
-    <span class="s2">"Saving validates the logical rules, writes the staged configuration, "</span>
-    <span class="s2">"and displays a diff. It never applies changes to the live firewall."</span>
-<span class="p">))</span>
-<span class="n">display</span><span class="p">(</span><span class="n">save_button</span><span class="p">)</span>
-<span class="n">display</span><span class="p">(</span><span class="n">validation_output</span><span class="p">)</span>
-<span class="n">display</span><span class="p">(</span><span class="n">diff_output</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell-outputWrapper">
-<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
-</div>
-<div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<h2 id="Validate-and-stage">Validate and stage<a class="anchor-link" href="#Validate-and-stage">¶</a></h2>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p>Saving validates the logical rules, writes the staged configuration, and displays a diff. It never applies changes to the live firewall.</p>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Button(button_style='info', description='Validate and save staging file', icon='save', style=ButtonStyle())</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Output()</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Output()</pre>
-</div>
-</div>
-</div>
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=bcda6fc6-f5ef-4b9e-a333-9c87c380b4ad">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
-<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-<div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># TCP Zone 01 — Validate, stage, and test</span>
-<span class="c1"># Requires the editor and rule-rendering functions from the earlier cells.</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">difflib</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">Markdown</span><span class="p">,</span> <span class="n">HTML</span><span class="p">,</span> <span class="n">clear_output</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">ipywidgets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">widgets</span>
-
-
-<span class="c1"># ------------------------------------------------------------</span>
-<span class="c1"># Paths and test configuration</span>
-<span class="c1"># ------------------------------------------------------------</span>
-
-<span class="n">SOURCE_FILE</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"/etc/nft/web01/rules/10-tcp-networks.nft"</span><span class="p">)</span>
-<span class="n">STAGING_FILE</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"/tmp/10-tcp-networks.nft"</span><span class="p">)</span>
-<span class="n">RULESET_ENTRYPOINT</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">"/tmp/nftables-zone01-test.conf"</span><span class="p">)</span>
-
-<span class="n">VALIDATION_NAMESPACE</span> <span class="o">=</span> <span class="s2">"web01"</span>
-
-<span class="n">VARIABLES_INCLUDE</span> <span class="o">=</span> <span class="s2">"/etc/nft/web01/variables/*.nft"</span>
-<span class="n">CONSTANTS_INCLUDE</span> <span class="o">=</span> <span class="s2">"/etc/nft/web01/constants/*.nft"</span>
-<span class="n">ICMP_INCLUDE</span> <span class="o">=</span> <span class="s2">"/etc/nft/web01/rules/06-icmp-networks.nft"</span>
-<span class="n">UDP_INCLUDE</span> <span class="o">=</span> <span class="s2">"/etc/nft/web01/rules/08-udp-networks.nft"</span>
-<span class="n">ZONES_INCLUDE</span> <span class="o">=</span> <span class="s2">"/etc/nft/web01/zones/*.nft"</span>
-
-
-<span class="c1"># ------------------------------------------------------------</span>
-<span class="c1"># Build an isolated loader using the staged TCP file</span>
+<span class="c1"># Build isolated test entry point</span>
 <span class="c1"># ------------------------------------------------------------</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">build_test_entrypoint</span><span class="p">():</span>
-    <span class="n">required</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">required_files</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">Path</span><span class="p">(</span><span class="n">ICMP_INCLUDE</span><span class="p">),</span>
         <span class="n">Path</span><span class="p">(</span><span class="n">UDP_INCLUDE</span><span class="p">),</span>
     <span class="p">]</span>
 
-    <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">is_file</span><span class="p">()]</span>
+    <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">required_files</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span>
+    <span class="p">]</span>
     <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
-            <span class="s2">"Required production rule files missing: "</span>
-            <span class="o">+</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span>
+            <span class="s2">"Required rule files are missing: "</span> <span class="o">+</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span>
         <span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">STAGING_FILE</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"Staged TCP rules do not exist: </span><span class="si">{</span><span class="n">STAGING_FILE</span><span class="si">}</span><span class="s2">"</span>
-        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Staged TCP file missing: </span><span class="si">{</span><span class="n">STAGING_FILE</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="n">text</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
         <span class="s2">"# Generated by the TCP Zone 01 editor."</span><span class="p">,</span>
-        <span class="s2">"# Test entry point; not the production loader."</span><span class="p">,</span>
-        <span class="s2">"# Loading this file flushes the active ruleset."</span><span class="p">,</span>
+        <span class="s2">"# Syntax-check only; do not load this test file directly."</span><span class="p">,</span>
         <span class="s2">"flush ruleset"</span><span class="p">,</span>
         <span class="sa">f</span><span class="s1">'include "</span><span class="si">{</span><span class="n">VARIABLES_INCLUDE</span><span class="si">}</span><span class="s1">"'</span><span class="p">,</span>
         <span class="sa">f</span><span class="s1">'include "</span><span class="si">{</span><span class="n">CONSTANTS_INCLUDE</span><span class="si">}</span><span class="s1">"'</span><span class="p">,</span>
@@ -8897,7 +8497,7 @@ Generated R02 entries: 10
 
 
 <span class="c1"># ------------------------------------------------------------</span>
-<span class="c1"># Validate the entire candidate ruleset without applying it</span>
+<span class="c1"># Test the candidate ruleset without applying it</span>
 <span class="c1"># ------------------------------------------------------------</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">check_staged_configuration</span><span class="p">():</span>
@@ -8930,17 +8530,16 @@ Generated R02 entries: 10
         <span class="p">)</span>
 
         <span class="n">output</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">part</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span>
                 <span class="s2">"status"</span><span class="p">:</span> <span class="s2">"passed"</span><span class="p">,</span>
                 <span class="s2">"message"</span><span class="p">:</span> <span class="p">(</span>
-                    <span class="s2">"Candidate ruleset passed nft -c. "</span>
-                    <span class="s2">"No rules were applied."</span>
+                    <span class="s2">"Candidate ruleset passed nft -c. No rules applied."</span>
                     <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">output</span> <span class="k">else</span> <span class="s2">""</span><span class="p">)</span>
                 <span class="p">),</span>
             <span class="p">}</span>
@@ -8948,42 +8547,83 @@ Generated R02 entries: 10
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span>
             <span class="s2">"message"</span><span class="p">:</span> <span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"nft -c failed with exit status </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">returncode</span><span class="si">}</span><span class="s2">."</span>
-                <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"nft -c failed (exit </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">returncode</span><span class="si">}</span><span class="s2">).</span><span class="se">\n</span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">),</span>
         <span class="p">}</span>
 
     <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">TimeoutExpired</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span>
-            <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Syntax check timed out after 30 seconds."</span><span class="p">,</span>
-        <span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">:</span> <span class="s2">"Syntax check timed out."</span><span class="p">}</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">RuntimeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span>
-            <span class="s2">"message"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">),</span>
-        <span class="p">}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"status"</span><span class="p">:</span> <span class="s2">"failed"</span><span class="p">,</span> <span class="s2">"message"</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)}</span>
 
 
 <span class="c1"># ------------------------------------------------------------</span>
-<span class="c1"># Save, validate, stage, check, and display the diff</span>
+<span class="c1"># Deploy and reload only after a successful syntax check</span>
+<span class="c1"># ------------------------------------------------------------</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">deploy_and_reload</span><span class="p">():</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">PRODUCTION_ENTRYPOINT</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Production entry point not found: </span><span class="si">{</span><span class="n">PRODUCTION_ENTRYPOINT</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">read_source</span><span class="p">()</span> <span class="o">!=</span> <span class="n">source_original</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">"Production TCP file changed externally; deployment cancelled."</span>
+        <span class="p">)</span>
+
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">STAGING_FILE</span><span class="p">,</span> <span class="n">SOURCE_FILE</span><span class="p">)</span>
+
+    <span class="n">command</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">"ip"</span><span class="p">,</span> <span class="s2">"netns"</span><span class="p">,</span> <span class="s2">"exec"</span><span class="p">,</span> <span class="n">VALIDATION_NAMESPACE</span><span class="p">,</span>
+        <span class="s2">"nft"</span><span class="p">,</span> <span class="s2">"-f"</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">PRODUCTION_ENTRYPOINT</span><span class="p">),</span>
+    <span class="p">]</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="n">command</span><span class="p">,</span>
+        <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+        <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">part</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s2">"The TCP file was replaced, but the production reload failed "</span>
+            <span class="sa">f</span><span class="s2">"(exit </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">returncode</span><span class="si">}</span><span class="s2">).</span><span class="se">\n</span><span class="si">{</span><span class="n">output</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="s2">"Inspect the namespace ruleset and resolve the reload failure."</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">output</span> <span class="ow">or</span> <span class="s2">"Production ruleset reloaded successfully."</span>
+
+
+<span class="c1"># ------------------------------------------------------------</span>
+<span class="c1"># Single action: validate -&gt; stage -&gt; test -&gt; deploy -&gt; reload</span>
 <span class="c1"># ------------------------------------------------------------</span>
 
 <span class="n">validation_output</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
 <span class="n">diff_output</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Output</span><span class="p">()</span>
 
-<span class="n">save_button</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">"Validate, stage and check"</span><span class="p">,</span>
+<span class="n">workflow_button</span> <span class="o">=</span> <span class="n">widgets</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">"Validate, test, deploy and reload"</span><span class="p">,</span>
     <span class="n">icon</span><span class="o">=</span><span class="s2">"check"</span><span class="p">,</span>
-    <span class="n">button_style</span><span class="o">=</span><span class="s2">"info"</span><span class="p">,</span>
+    <span class="n">button_style</span><span class="o">=</span><span class="s2">"warning"</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">save_zone01_staging</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_zone01_workflow</span><span class="p">(</span><span class="n">_</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">source_original</span>
+
     <span class="k">with</span> <span class="n">validation_output</span><span class="p">:</span>
         <span class="n">clear_output</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">errors</span><span class="p">,</span> <span class="n">warnings</span> <span class="o">=</span> <span class="n">validate_zone01_rules</span><span class="p">()</span>
-
         <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s2">"## Validation report"</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
@@ -8993,40 +8633,30 @@ Generated R02 entries: 10
             <span class="k">for</span> <span class="n">error</span> <span class="ow">in</span> <span class="n">errors</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">"ERROR:"</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span>
 
-            <span class="n">set_status</span><span class="p">(</span>
-                <span class="s2">"Validation failed; staging file was not written."</span><span class="p">,</span>
-                <span class="n">error</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">No staging or deployment performed."</span><span class="p">)</span>
+            <span class="n">set_status</span><span class="p">(</span><span class="s2">"Validation failed; deployment cancelled."</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">return</span>
+
+        <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span>
+            <span class="s2">"&lt;h4 style='color:#166534'&gt;Logical validation passed&lt;/h4&gt;"</span>
+        <span class="p">))</span>
 
         <span class="k">for</span> <span class="n">warning</span> <span class="ow">in</span> <span class="n">warnings</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">"WARNING:"</span><span class="p">,</span> <span class="n">warning</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="c1"># Refuse to overwrite changes made outside the editor.</span>
-            <span class="n">current_source</span> <span class="o">=</span> <span class="n">read_source</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">current_source</span> <span class="o">!=</span> <span class="n">source_original</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                    <span class="s2">"Production source changed since it was loaded. "</span>
-                    <span class="s2">"Reload and reconcile before saving."</span>
-                <span class="p">)</span>
-
             <span class="n">staged_text</span> <span class="o">=</span> <span class="n">build_zone01_staged_source</span><span class="p">()</span>
-
-            <span class="n">STAGING_FILE</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span>
-                <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span>
-            <span class="p">)</span>
+            <span class="n">STAGING_FILE</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">STAGING_FILE</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">staged_text</span><span class="p">)</span>
 
-            <span class="n">check</span> <span class="o">=</span> <span class="n">check_staged_configuration</span><span class="p">()</span>
-
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Source: </span><span class="si">{</span><span class="n">SOURCE_FILE</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Staging file: </span><span class="si">{</span><span class="n">STAGING_FILE</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Test entry point: </span><span class="si">{</span><span class="n">RULESET_ENTRYPOINT</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Logical rules: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rules</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"R01 entries: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rules</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"R02 entries: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rules</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"nftables check: </span><span class="si">{</span><span class="n">check</span><span class="p">[</span><span class="s1">'status'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+            <span class="n">check</span> <span class="o">=</span> <span class="n">check_staged_configuration</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">nftables syntax check: </span><span class="si">{</span><span class="n">check</span><span class="p">[</span><span class="s1">'status'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">check</span><span class="p">[</span><span class="s2">"message"</span><span class="p">])</span>
 
             <span class="k">with</span> <span class="n">diff_output</span><span class="p">:</span>
@@ -9041,31 +8671,44 @@ Generated R02 entries: 10
                 <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s2">"## Proposed TCP rules diff"</span><span class="p">))</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">"No changes detected."</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">check</span><span class="p">[</span><span class="s2">"status"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"passed"</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">check</span><span class="p">[</span><span class="s2">"status"</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">"passed"</span><span class="p">:</span>
                 <span class="n">set_status</span><span class="p">(</span>
-                    <span class="s2">"Staged and syntax-checked. Live firewall unchanged."</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">set_status</span><span class="p">(</span>
-                    <span class="s2">"Staged, but syntax validation did not pass. "</span>
-                    <span class="s2">"Do not deploy."</span><span class="p">,</span>
+                    <span class="s2">"Syntax check did not pass. Deployment cancelled."</span><span class="p">,</span>
                     <span class="n">error</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s2">"</span><span class="se">\n</span><span class="s2">Production TCP file and ruleset were not changed."</span>
+                <span class="p">)</span>
+                <span class="k">return</span>
+
+            <span class="n">reload_output</span> <span class="o">=</span> <span class="n">deploy_and_reload</span><span class="p">()</span>
+
+            <span class="c1"># Update the concurrency guard after successful deployment.</span>
+            <span class="n">source_original</span> <span class="o">=</span> <span class="n">read_source</span><span class="p">()</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Deployed TCP file: </span><span class="si">{</span><span class="n">SOURCE_FILE</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Reloaded entry point: </span><span class="si">{</span><span class="n">PRODUCTION_ENTRYPOINT</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Namespace: </span><span class="si">{</span><span class="n">VALIDATION_NAMESPACE</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">reload_output</span><span class="p">)</span>
+
+            <span class="n">set_status</span><span class="p">(</span>
+                <span class="s2">"Syntax check passed; TCP rules deployed and ruleset reloaded."</span>
+            <span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ERROR: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="n">set_status</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">),</span> <span class="n">error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">ERROR: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">set_status</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Workflow stopped: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
-<span class="n">save_button</span><span class="o">.</span><span class="n">on_click</span><span class="p">(</span><span class="n">save_zone01_staging</span><span class="p">)</span>
+<span class="n">workflow_button</span><span class="o">.</span><span class="n">on_click</span><span class="p">(</span><span class="n">run_zone01_workflow</span><span class="p">)</span>
 
-<span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s2">"# TCP Zone 01 — Test workflow"</span><span class="p">))</span>
+<span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span><span class="s2">"# TCP Zone 01 — Complete deployment workflow"</span><span class="p">))</span>
 <span class="n">display</span><span class="p">(</span><span class="n">Markdown</span><span class="p">(</span>
-    <span class="s2">"The editor writes a candidate TCP file, generates a dedicated "</span>
-    <span class="s2">"test entry point, runs nft -c, and displays the proposed diff. "</span>
-    <span class="s2">"It never applies the ruleset."</span>
+    <span class="s2">"Logical validation and the isolated nftables syntax check must pass "</span>
+    <span class="s2">"before the production TCP file is replaced and the ruleset reloaded. "</span>
+    <span class="s2">"No backups are created."</span>
 <span class="p">))</span>
-<span class="n">display</span><span class="p">(</span><span class="n">save_button</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">workflow_button</span><span class="p">)</span>
 <span class="n">display</span><span class="p">(</span><span class="n">validation_output</span><span class="p">)</span>
 <span class="n">display</span><span class="p">(</span><span class="n">diff_output</span><span class="p">)</span>
 </pre></div>
@@ -9080,25 +8723,19 @@ Generated R02 entries: 10
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<h1 id="TCP-Zone-01-%E2%80%94-Test-workflow">TCP Zone 01 — Test workflow<a class="anchor-link" href="#TCP-Zone-01-%E2%80%94-Test-workflow">¶</a></h1>
+<h1 id="TCP-Zone-01-%E2%80%94-Complete-deployment-workflow">TCP Zone 01 — Complete deployment workflow<a class="anchor-link" href="#TCP-Zone-01-%E2%80%94-Complete-deployment-workflow">¶</a></h1>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-OutputArea-output" data-mime-type="text/markdown" tabindex="0">
-<p>The editor writes a candidate TCP file, generates a dedicated test entry point, runs nft -c, and displays the proposed diff. It never applies the ruleset.</p>
+<p>Logical validation and the isolated nftables syntax check must pass before the production TCP file is replaced and the ruleset reloaded. No backups are created.</p>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Button(button_style='info', description='Validate, stage and check', icon='check', style=ButtonStyle())</pre>
-</div>
-</div>
-<div class="jp-OutputArea-child">
-<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
-<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>Output()</pre>
+<pre>Button(button_style='warning', description='Validate, test, deploy and reload', icon='check', style=ButtonStyl…</pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
@@ -9107,9 +8744,15 @@ Generated R02 entries: 10
 <pre>Output()</pre>
 </div>
 </div>
+<div class="jp-OutputArea-child">
+<div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Output()</pre>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=979f2388-cdcc-4229-a791-1eb2d987b3c4">
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=5b39aedb-8d27-4e36-a4e6-d0827e8174d9">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
