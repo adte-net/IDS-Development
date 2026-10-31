@@ -1,0 +1,520 @@
+{
+  "version": 2,
+  "namespaces": [
+    "deploybase",
+    "phone",
+    "switch01",
+    "client-gw",
+    "client1",
+    "wan",
+    "mail03",
+    "web01",
+    "hq-isp-gw",
+    "a10002"
+  ],
+  "links": [
+    {
+      "intA": "veth-client-gw",
+      "nsA": "client1",
+      "renameA": "eth0",
+      "intB": "veth-gw-client",
+      "nsB": "client-gw",
+      "renameB": "eth0"
+    },
+    {
+      "intA": "veth-client-wan",
+      "nsA": "client-gw",
+      "renameA": "eth1",
+      "intB": "veth-wan-client",
+      "nsB": "wan",
+      "renameB": "eth1"
+    },
+    {
+      "intA": "veth-wan-web",
+      "nsA": "wan",
+      "renameA": "eth0",
+      "intB": "veth-web01",
+      "nsB": "web01",
+      "renameB": "eth0"
+    },
+    {
+      "intA": "veth-wan-hq",
+      "nsA": "wan",
+      "renameA": "eth2",
+      "intB": "veth-hq-wan",
+      "nsB": "hq-isp-gw",
+      "renameB": "eth2"
+    },
+    {
+      "intA": "veth-hq-deploy",
+      "nsA": "hq-isp-gw",
+      "renameA": "eth0",
+      "intB": "veth-deploy-hq",
+      "nsB": "deploybase",
+      "renameB": "eth0"
+    },
+    {
+      "intA": "veth-dep-phone",
+      "nsA": "deploybase",
+      "renameA": "eth1",
+      "intB": "veth-phone-dep",
+      "nsB": "phone",
+      "renameB": "eth0"
+    },
+    {
+      "intA": "veth-deploy-sw",
+      "nsA": "deploybase",
+      "renameA": "eth2",
+      "intB": "veth-sw-deploy",
+      "nsB": "switch01",
+      "renameB": "veth-deploybase"
+    },
+    {
+      "intA": "veth-a1-sw",
+      "nsA": "a10002",
+      "renameA": "eth0",
+      "intB": "veth-sw-a1",
+      "nsB": "switch01",
+      "renameB": "veth-a10002"
+    },
+    {
+      "intA": "veth-m3-sw",
+      "nsA": "mail03",
+      "renameA": "eth0",
+      "intB": "veth-sw-m3",
+      "nsB": "switch01",
+      "renameB": "veth-mail03"
+    }
+  ],
+  "switches": [
+    {
+      "ns": "switch01",
+      "bridge": "br0",
+      "stp": false,
+      "vlan_filtering": false,
+      "ports": [
+        "veth-deploybase",
+        "veth-a10002",
+        "veth-mail03"
+      ]
+    }
+  ],
+  "physical": [],
+  "wireguard": [
+    {
+      "ns": "deploybase",
+      "iface": "wg0",
+      "config": "/etc/wireguard/deploybase/wg0.conf",
+      "enabled": false
+    },
+    {
+      "ns": "mail03",
+      "iface": "wg0",
+      "config": "/etc/wireguard/mail03/wg0.conf",
+      "enabled": false
+    },
+    {
+      "ns": "web01",
+      "iface": "wg0",
+      "config": "/etc/wireguard/web01/wg0.conf",
+      "enabled": false
+    }
+  ],
+  "ips": [
+    {
+      "ns": "client1",
+      "iface": "eth0",
+      "addr": "198.51.100.20/24",
+      "version": "IPv4"
+    },
+    {
+      "ns": "client1",
+      "iface": "eth0",
+      "addr": "2001:db8:100::20/64",
+      "version": "IPv6"
+    },
+    {
+      "ns": "client-gw",
+      "iface": "eth0",
+      "addr": "198.51.100.1/24",
+      "version": "IPv4"
+    },
+    {
+      "ns": "client-gw",
+      "iface": "eth0",
+      "addr": "2001:db8:100::1/64",
+      "version": "IPv6"
+    },
+    {
+      "ns": "client-gw",
+      "iface": "eth1",
+      "addr": "192.0.2.2/30",
+      "version": "IPv4"
+    },
+    {
+      "ns": "client-gw",
+      "iface": "eth1",
+      "addr": "2001:db8:200::2/64",
+      "version": "IPv6"
+    },
+    {
+      "ns": "wan",
+      "iface": "eth1",
+      "addr": "192.0.2.1/30",
+      "version": "IPv4"
+    },
+    {
+      "ns": "wan",
+      "iface": "eth1",
+      "addr": "2001:db8:200::1/64",
+      "version": "IPv6"
+    },
+    {
+      "ns": "wan",
+      "iface": "eth0",
+      "addr": "163.213.153.1/24",
+      "version": "IPv4"
+    },
+    {
+      "ns": "wan",
+      "iface": "eth0",
+      "addr": "2607:9100:0:35::1/64",
+      "version": "IPv6"
+    },
+    {
+      "ns": "wan",
+      "iface": "eth2",
+      "addr": "192.0.2.6/30",
+      "version": "IPv4"
+    },
+    {
+      "ns": "wan",
+      "iface": "eth2",
+      "addr": "2001:db8:300::1/64",
+      "version": "IPv6"
+    },
+    {
+      "ns": "web01",
+      "iface": "eth0",
+      "addr": "163.213.153.201/24",
+      "version": "IPv4"
+    },
+    {
+      "ns": "web01",
+      "iface": "eth0",
+      "addr": "2607:9100:0:35::2f2:f43d/64",
+      "version": "IPv6"
+    },
+    {
+      "ns": "hq-isp-gw",
+      "iface": "eth0",
+      "addr": "74.227.154.1/24",
+      "version": "IPv4"
+    },
+    {
+      "ns": "hq-isp-gw",
+      "iface": "eth0",
+      "addr": "2001:db8:400::2/64",
+      "version": "IPv6"
+    },
+    {
+      "ns": "hq-isp-gw",
+      "iface": "eth2",
+      "addr": "192.0.2.5/30",
+      "version": "IPv4"
+    },
+    {
+      "ns": "hq-isp-gw",
+      "iface": "eth2",
+      "addr": "2001:db8:300::2/64",
+      "version": "IPv6"
+    },
+    {
+      "ns": "deploybase",
+      "iface": "eth0",
+      "addr": "74.227.154.239/24",
+      "version": "IPv4"
+    },
+    {
+      "ns": "deploybase",
+      "iface": "eth0",
+      "addr": "2001:db8:400::1/64",
+      "version": "IPv6"
+    },
+    {
+      "ns": "deploybase",
+      "iface": "eth1",
+      "addr": "172.16.2.11/24",
+      "version": "IPv4"
+    },
+    {
+      "ns": "deploybase",
+      "iface": "eth1",
+      "addr": "2607:182:8200:7ff1:2c0:caff:fe84:a520/64",
+      "version": "IPv6"
+    },
+    {
+      "ns": "deploybase",
+      "iface": "eth2",
+      "addr": "172.16.1.11/24",
+      "version": "IPv4"
+    },
+    {
+      "ns": "deploybase",
+      "iface": "eth2",
+      "addr": "2607:182:8200:7ff2::1/64",
+      "version": "IPv6"
+    },
+    {
+      "ns": "phone",
+      "iface": "eth0",
+      "addr": "172.16.2.12/24",
+      "version": "IPv4"
+    },
+    {
+      "ns": "a10002",
+      "iface": "eth0",
+      "addr": "172.16.1.13/24",
+      "version": "IPv4"
+    },
+    {
+      "ns": "a10002",
+      "iface": "eth0",
+      "addr": "2607:182:8200:7ff2:222:64ff:fe56:813b/64",
+      "version": "IPv6"
+    },
+    {
+      "ns": "mail03",
+      "iface": "eth0",
+      "addr": "172.16.1.107/24",
+      "version": "IPv4"
+    },
+    {
+      "ns": "mail03",
+      "iface": "eth0",
+      "addr": "2607:182:8200:7ff2:4036:5bff:fe5d:b3f6/64",
+      "version": "IPv6"
+    }
+  ],
+  "routes": [
+    {
+      "ns": "client1",
+      "dst": "0.0.0.0/0",
+      "via": "198.51.100.1",
+      "dev": "eth0",
+      "family": "IPv4"
+    },
+    {
+      "ns": "client1",
+      "dst": "::/0",
+      "via": "2001:db8:100::1",
+      "dev": "eth0",
+      "family": "IPv6"
+    },
+    {
+      "ns": "client-gw",
+      "dst": "0.0.0.0/0",
+      "via": "192.0.2.1",
+      "dev": "eth1",
+      "family": "IPv4"
+    },
+    {
+      "ns": "client-gw",
+      "dst": "::/0",
+      "via": "2001:db8:200::1",
+      "dev": "eth1",
+      "family": "IPv6"
+    },
+    {
+      "ns": "wan",
+      "dst": "198.51.100.0/24",
+      "via": "192.0.2.2",
+      "dev": "eth1",
+      "family": "IPv4"
+    },
+    {
+      "ns": "wan",
+      "dst": "74.227.154.0/24",
+      "via": "192.0.2.5",
+      "dev": "eth2",
+      "family": "IPv4"
+    },
+    {
+      "ns": "wan",
+      "dst": "172.16.1.0/24",
+      "via": "192.0.2.5",
+      "dev": "eth2",
+      "family": "IPv4"
+    },
+    {
+      "ns": "wan",
+      "dst": "172.16.2.0/24",
+      "via": "192.0.2.5",
+      "dev": "eth2",
+      "family": "IPv4"
+    },
+    {
+      "ns": "wan",
+      "dst": "2001:db8:100::/64",
+      "via": "2001:db8:200::2",
+      "dev": "eth1",
+      "family": "IPv6"
+    },
+    {
+      "ns": "wan",
+      "dst": "2001:db8:400::/64",
+      "via": "2001:db8:300::2",
+      "dev": "eth2",
+      "family": "IPv6"
+    },
+    {
+      "ns": "wan",
+      "dst": "2607:182:8200:7ff2::/64",
+      "via": "2001:db8:300::2",
+      "dev": "eth2",
+      "family": "IPv6"
+    },
+    {
+      "ns": "wan",
+      "dst": "2607:182:8200:7ff1::/64",
+      "via": "2001:db8:300::2",
+      "dev": "eth2",
+      "family": "IPv6"
+    },
+    {
+      "ns": "web01",
+      "dst": "0.0.0.0/0",
+      "via": "163.213.153.1",
+      "dev": "eth0",
+      "family": "IPv4"
+    },
+    {
+      "ns": "web01",
+      "dst": "::/0",
+      "via": "2607:9100:0:35::1",
+      "dev": "eth0",
+      "family": "IPv6"
+    },
+    {
+      "ns": "hq-isp-gw",
+      "dst": "0.0.0.0/0",
+      "via": "192.0.2.6",
+      "dev": "eth2",
+      "family": "IPv4"
+    },
+    {
+      "ns": "hq-isp-gw",
+      "dst": "::/0",
+      "via": "2001:db8:300::1",
+      "dev": "eth2",
+      "family": "IPv6"
+    },
+    {
+      "ns": "hq-isp-gw",
+      "dst": "172.16.1.0/24",
+      "via": "74.227.154.239",
+      "dev": "eth0",
+      "family": "IPv4"
+    },
+    {
+      "ns": "hq-isp-gw",
+      "dst": "172.16.2.0/24",
+      "via": "74.227.154.239",
+      "dev": "eth0",
+      "family": "IPv4"
+    },
+    {
+      "ns": "hq-isp-gw",
+      "dst": "2607:182:8200:7ff2::/64",
+      "via": "2001:db8:400::1",
+      "dev": "eth0",
+      "family": "IPv6"
+    },
+    {
+      "ns": "hq-isp-gw",
+      "dst": "2607:182:8200:7ff1::/64",
+      "via": "2001:db8:400::1",
+      "dev": "eth0",
+      "family": "IPv6"
+    },
+    {
+      "ns": "deploybase",
+      "dst": "0.0.0.0/0",
+      "via": "74.227.154.1",
+      "dev": "eth0",
+      "family": "IPv4"
+    },
+    {
+      "ns": "deploybase",
+      "dst": "::/0",
+      "via": "2001:db8:400::2",
+      "dev": "eth0",
+      "family": "IPv6"
+    },
+    {
+      "ns": "phone",
+      "dst": "0.0.0.0/0",
+      "via": "172.16.2.11",
+      "dev": "eth0",
+      "family": "IPv4"
+    },
+    {
+      "ns": "phone",
+      "dst": "::/0",
+      "via": "2607:182:8200:7ff1:2c0:caff:fe84:a520",
+      "dev": "eth0",
+      "family": "IPv6"
+    },
+    {
+      "ns": "a10002",
+      "dst": "0.0.0.0/0",
+      "via": "172.16.1.11",
+      "dev": "eth0",
+      "family": "IPv4"
+    },
+    {
+      "ns": "a10002",
+      "dst": "::/0",
+      "via": "2607:182:8200:7ff2::1",
+      "dev": "eth0",
+      "family": "IPv6"
+    },
+    {
+      "ns": "mail03",
+      "dst": "0.0.0.0/0",
+      "via": "172.16.1.11",
+      "dev": "eth0",
+      "family": "IPv4"
+    },
+    {
+      "ns": "mail03",
+      "dst": "::/0",
+      "via": "2607:182:8200:7ff2::1",
+      "dev": "eth0",
+      "family": "IPv6"
+    }
+  ],
+  "rules": [],
+  "forwarding": [
+    {
+      "ns": "client-gw",
+      "ipv4": true,
+      "ipv6": true
+    },
+    {
+      "ns": "wan",
+      "ipv4": true,
+      "ipv6": true
+    },
+    {
+      "ns": "hq-isp-gw",
+      "ipv4": true,
+      "ipv6": true
+    },
+    {
+      "ns": "deploybase",
+      "ipv4": true,
+      "ipv6": true
+    }
+  ]
+}
