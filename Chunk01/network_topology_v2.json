@@ -272,6 +272,12 @@
       "version": "IPv4"
     },
     {
+      "ns": "phone",
+      "iface": "eth0",
+      "addr": "2607:182:8200:7ff1::2/64",
+      "version": "IPv6"
+    },
+    {
       "ns": "a10002",
       "iface": "eth0",
       "addr": "172.16.1.13/24",
